@@ -6,11 +6,23 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+const StylexWebpackPlugin = require('@stylexjs/webpack-plugin')
+const stylexBabelPlugin = require('@stylexjs/babel-plugin')
 
 /** @returns { import('webpack').Configuration } */
 module.exports = (env, argv) => {
-    const mode = argv.mode
-    const isDevelopment = mode === "development"
+    const dev = argv.mode === 'development'
+    const prod = !dev
+    const stylex_options = {
+        dev,
+        // Required for CSS variable support
+        unstable_moduleResolution: {
+            type: 'commonJS',
+            // The absolute path to the root directory of your project
+            rootDir: __dirname,
+        }
+    }
+
     return {
         target: 'web',
         entry: './src/index.tsx',
@@ -19,7 +31,7 @@ module.exports = (env, argv) => {
             path: path.resolve(__dirname, 'dist'),
             clean: true
         },
-        mode: isDevelopment ? 'development' : 'production',
+        mode: dev ? 'development' : 'production',
         devtool: 'inline-source-map',
         devServer: {
             port: 8080,
@@ -27,6 +39,13 @@ module.exports = (env, argv) => {
             static: './dist',
         },
         plugins: [
+            // Ensure that the stylex plugin is used before Babel
+            prod && new StylexWebpackPlugin({
+                filename: 'styles.[contenthash].css',
+                runtimeInjection: false,
+                classNamePrefix: 'x',
+                ...stylex_options
+            }),
             new HtmlWebpackPlugin({
                 template: "src/index.html",
             }),
@@ -39,7 +58,7 @@ module.exports = (env, argv) => {
                 ],
             }),
             new ForkTsCheckerWebpackPlugin(),
-        ],
+        ].filter(Boolean),
         resolve: {
             extensions: ['.tsx', '.ts', '.js'],
         },
@@ -55,12 +74,20 @@ module.exports = (env, argv) => {
                             options: {
                                 env: {
                                     development: {
-                                        plugins: ["solid-refresh/babel"]
+                                        plugins: [
+                                            "solid-refresh/babel",
+                                            [
+                                                stylexBabelPlugin,
+                                                {
+                                                    test: false,
+                                                    ...stylex_options
+                                                }
+                                            ]
+                                        ]
                                     }
                                 },
                                 presets: [
                                     ["solid"]
-                                    // ['@babel/preset-env', { targets: 'defaults' }]
                                 ]
                             },
                         },
@@ -74,7 +101,7 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.s?css$/i,
-                    use: ['style-loader', 'css-loader', 'sass-loader'],
+                    use: ['style-loader', 'css-loader'],
                 },
                 {
                     test: /\.(png|jpg|jpeg|gif)$/i,

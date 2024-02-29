@@ -14,6 +14,7 @@
     "solid-js": "^1.8.15"
   },
   "devDependencies": {
+    "@stylexjs/webpack-plugin": "^0.5.1",
     "@types/node": "18.19.21",
     "@types/webpack": "^5.28.3",
     "@typescript-eslint/eslint-plugin": "7.1.0",
@@ -25,15 +26,13 @@
     "eslint": "^8.50.0",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "html-webpack-plugin": "^5.5.3",
-    "sass": "^1.68.0",
-    "sass-loader": "^14.1.1",
     "solid-refresh": "^0.7.5",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.4.4",
     "typescript": "^5.2.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^5.0.2"
   },
   "engines": {
     "node": ">= 18"
