@@ -53,10 +53,15 @@ module.exports = (env, argv) => {
                         {
                             loader: 'babel-loader',
                             options: {
+                                env: {
+                                    development: {
+                                        plugins: ["solid-refresh/babel"]
+                                    }
+                                },
                                 presets: [
                                     ["solid"]
                                     // ['@babel/preset-env', { targets: 'defaults' }]
-                                ],
+                                ]
                             },
                         },
                         {
