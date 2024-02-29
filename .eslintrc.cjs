@@ -13,5 +13,7 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   settings: {},
-  rules: {}
+  rules: {
+    "@typescript-eslint/consistent-type-imports": "warn"
+  }
 }
