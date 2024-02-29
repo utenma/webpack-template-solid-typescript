@@ -15,7 +15,6 @@ export const App: Component = () => {
                 </button>
                 Count value is {count()}
             </div>
-
         </div>
     )
 }
