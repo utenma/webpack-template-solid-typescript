@@ -1,4 +1,11 @@
 {
+    "ts-node": {
+        "files": true,
+        "compilerOptions": {
+            "module": "CommonJS",
+            "noImplicitAny": false
+        }
+    },
     "compilerOptions": {
         "outDir": "./dist/",
         "module": "ES6",

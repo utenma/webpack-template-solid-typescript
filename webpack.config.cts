@@ -1,16 +1,16 @@
-// @ts-check
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
+import path from 'path'
 
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
-const StylexWebpackPlugin = require('@stylexjs/webpack-plugin')
-const stylexBabelPlugin = require('@stylexjs/babel-plugin')
+import type webpack from 'webpack'
+import 'webpack-dev-server'
 
-/** @returns { import('webpack').Configuration } */
-module.exports = (env, argv) => {
+import CopyPlugin from 'copy-webpack-plugin'
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+
+import stylexBabelPlugin from '@stylexjs/babel-plugin'
+import StylexWebpackPlugin from '@stylexjs/webpack-plugin'
+
+const config = (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration => {
     const dev = argv.mode === 'development'
     const prod = !dev
     const stylex_options = {
@@ -115,3 +115,5 @@ module.exports = (env, argv) => {
         }
     }
 }
+
+export default config
