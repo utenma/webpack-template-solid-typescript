@@ -6,6 +6,7 @@ import 'webpack-dev-server'
 import CopyPlugin from 'copy-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import MiniCssExtractPlugin from "mini-css-extract-plugin"
 
 import stylexBabelPlugin from '@stylexjs/babel-plugin'
 import StylexWebpackPlugin from '@stylexjs/webpack-plugin'
@@ -13,8 +14,8 @@ import StylexWebpackPlugin from '@stylexjs/webpack-plugin'
 const config = (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration => {
     const dev = argv.mode === 'development'
     const prod = !dev
-    const stylex_options = {
-        dev,
+    const stylex_options: Partial<ConstructorParameters<typeof StylexWebpackPlugin>[0]> = {
+        useCSSLayers: true,
         // Required for CSS variable support
         unstable_moduleResolution: {
             type: 'commonJS',
@@ -36,12 +37,23 @@ const config = (env: Record<string, string>, argv: Record<string, string>): webp
         devServer: {
             port: 8080,
             hot: true,
+            liveReload: false,
             static: './dist',
         },
         plugins: [
+            new MiniCssExtractPlugin({
+                filename: "[name].bundle.css",
+                chunkFilename: "[id].css",
+            }),
             // Ensure that the stylex plugin is used before Babel
             prod && new StylexWebpackPlugin({
-                filename: 'styles.[contenthash].css',
+                // filename: 'stylex.css',
+                // get webpack mode and set value for dev
+                dev: false,
+                appendTo: "main.bundle.css",
+                // appendTo: 'head',
+                // Use statically generated CSS files and not runtime injected CSS.
+                // Even in development.
                 runtimeInjection: false,
                 classNamePrefix: 'x',
                 ...stylex_options
@@ -76,14 +88,15 @@ const config = (env: Record<string, string>, argv: Record<string, string>): webp
                                     development: {
                                         plugins: [
                                             "solid-refresh/babel",
-                                            [
+                                            dev && [
                                                 stylexBabelPlugin,
                                                 {
-                                                    test: false,
+                                                    dev: true,
+                                                    useCSSLayers: true,
                                                     ...stylex_options
                                                 }
                                             ]
-                                        ]
+                                        ].filter(Boolean)
                                     }
                                 },
                                 presets: [
@@ -101,7 +114,7 @@ const config = (env: Record<string, string>, argv: Record<string, string>): webp
                 },
                 {
                     test: /\.s?css$/i,
-                    use: ['style-loader', 'css-loader'],
+                    use: [MiniCssExtractPlugin.loader, 'css-loader'],
                 },
                 {
                     test: /\.(png|jpg|jpeg|gif)$/i,

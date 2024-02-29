@@ -1,6 +1,6 @@
 import * as stylex from '@stylexjs/stylex'
-import type { } from 'solid-js'
-import { Component, createSignal } from 'solid-js'
+import type { Component } from 'solid-js'
+import { createSignal } from 'solid-js'
 import { styles } from './styles'
 
 export const App: Component = () => {
